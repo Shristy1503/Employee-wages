@@ -21,6 +21,7 @@ function getWorkHours(work){
 let totalWage = 0;
 let totalHours = 0;
 let totalDays = 0;
+let dailyWages = []; 
 
 while (totalDays < MAX_WORKING_DAYS && totalHours < MAX_WORKING_HOURS) {
     let work = Math.floor(Math.random() * 3); 
@@ -34,9 +35,10 @@ while (totalDays < MAX_WORKING_DAYS && totalHours < MAX_WORKING_HOURS) {
     totalWage += dailyWage;
     totalHours += workHours;
     totalDays++;
-
+    dailyWages.push(dailyWage); 
     console.log(`Day ${totalDays}: Worked ${workHours} hours, Daily Wage = $${dailyWage}`);
 }
 
 console.log(`Total Days Worked: ${totalDays}, Total Hours Worked: ${totalHours}`);
 console.log(`Total Monthly Wage: $${totalWage}`);
+console.log("Daily Wages: ", dailyWages);
