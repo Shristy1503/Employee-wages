@@ -1,58 +1,66 @@
-let dailyWageArr = [160, 80, 160, 0, 160, 80, 160];  // Example array
-let totalWage = 0;
 
-function sum(dailyWage) {
-    totalWage += dailyWage;
+const WAGE_PER_HOUR = 20;
+const FULL_TIME_HOURS = 8;
+const PART_TIME_HOURS = 4;
+const MAX_WORKING_DAYS = 20;
+const MAX_WORKING_HOURS = 160;
+const FULL_TIME_WAGE = FULL_TIME_HOURS * WAGE_PER_HOUR;
+
+function getWorkHours(workType) {
+    switch (workType) {
+        case 1:
+            return PART_TIME_HOURS;
+        case 2:
+            return FULL_TIME_HOURS;
+        default:
+            return 0;
+    }
 }
 
-dailyWageArr.forEach(sum);
-console.log("Total wage: " + totalWage);
 
-function totalWages(totalWage, dailyWage) {
-    return totalWage + dailyWage;
+let totalHours = 0;
+let totalDays = 0;
+let dailyWages = []; 
+let dailyRecords = []; 
+let dailyWageMap = new Map();
+
+while (totalDays < MAX_WORKING_DAYS && totalHours < MAX_WORKING_HOURS) {
+    let workType = Math.floor(Math.random() * 3); 
+    let workHours = getWorkHours(workType);
+    
+    if (totalHours + workHours > MAX_WORKING_HOURS) {
+        workHours = MAX_WORKING_HOURS - totalHours; 
+    }
+
+    let dailyWage = workHours * WAGE_PER_HOUR;
+    totalHours += workHours;
+    totalDays++;
+
+    dailyWageMap.set(totalDays, dailyWage);
+    dailyRecords.push({ day: totalDays, wage: dailyWage });
 }
 
-console.log("Employee wage with reduce: " + dailyWageArr.reduce(totalWages, 0));
 
-let dailyCounter = 0;
-function mapDayWithWage(dailyWage) {
-    dailyCounter++;
-    return dailyCounter + " = " + dailyWage;
-}
+let totalWage = Array.from(dailyWageMap.values()).reduce((sum, wage) => sum + wage, 0);
+console.log(`Total Monthly Wage: $${totalWage}`);
 
-let mapDayWithWageArr = dailyWageArr.map(mapDayWithWage);
-console.log("Daily wage map:");
-console.log(mapDayWithWageArr);
+console.log("Day-wise Wages:", Array.from(dailyWageMap.entries()).map(([day, wage]) => `Day ${day}: $${wage}`));
 
-function fullTimeWage(dailyWage) {
-    return dailyWage === 160;
-}
 
-let fullDayWageArr = dailyWageArr.filter(fullTimeWage);
-console.log("Daily wage filter when full-time wage earned:");
-console.log(fullDayWageArr);
+let fullTimeDays = dailyRecords.filter(record => record.wage === FULL_TIME_WAGE);
+console.log("Days with Full-Time Wage:", fullTimeDays.map(record => `Day ${record.day}`));
 
-function findFulltimeWage(dailyWage) {
-    return dailyWage === 160;
-}
+let firstFullTimeDay = dailyRecords.find(record => record.wage === FULL_TIME_WAGE);
+console.log("First Full-Time Wage Earned On:", firstFullTimeDay ? `Day ${firstFullTimeDay.day}` : "Never");
 
-console.log("First time full-time wage was earned on day: " + (dailyWageArr.findIndex(findFulltimeWage) + 1));
 
-function isAllFullTimeWage(dailyWage) {
-    return dailyWage === 160;
-}
+let isEveryFullTime = fullTimeDays.every(record => record.wage === FULL_TIME_WAGE);
+console.log("Is Every Full-Time Wage Exactly 160?", isEveryFullTime);
 
-console.log("Check if all elements have full-time wage: " + fullDayWageArr.every(isAllFullTimeWage));
 
-function isAnyPartTimeWage(dailyWage) {
-    return dailyWage === 80;
-}
+let hasPartTimeWage = dailyRecords.some(record => record.wage === PART_TIME_HOURS * WAGE_PER_HOUR);
+console.log("Is there any Part-Time Wage?", hasPartTimeWage);
 
-console.log("Check if any part-time wage exists: " + dailyWageArr.some(isAnyPartTimeWage));
 
-function totalDaysWorked(numOfDays, dailyWage) {
-    if (dailyWage > 0) return numOfDays + 1;
-    return numOfDays;
-}
-
-console.log("Number of days employee worked: " + dailyWageArr.reduce(totalDaysWorked, 0));
+let daysWorked = dailyRecords.filter(record => record.wage > 0).length;
+console.log(`Total Days Employee Worked: ${daysWorked}`);
